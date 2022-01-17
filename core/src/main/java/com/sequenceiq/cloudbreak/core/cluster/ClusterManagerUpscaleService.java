@@ -1,7 +1,5 @@
 package com.sequenceiq.cloudbreak.core.cluster;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,23 +46,15 @@ public class ClusterManagerUpscaleService {
     @Inject
     private TargetedUpscaleSupportService targetedUpscaleSupportService;
 
-    public void upscaleClusterManager(Long stackId, String hostGroupName, Integer scalingAdjustment, boolean primaryGatewayChanged)
+    public void upscaleClusterManager(Long stackId, Map<String, Integer> hostGroupWithAdjustment, boolean primaryGatewayChanged)
             throws ClusterClientInitException {
         Stack stack = stackService.getByIdWithListsInTransaction(stackId);
-        LOGGER.debug("Adding {} new nodes for host group {}", scalingAdjustment, hostGroupName);
-        Map<String, List<String>> hostsPerHostGroup = new HashMap<>();
-
-        Map<String, String> hosts = hostRunner.addClusterServices(stackId, hostGroupName, scalingAdjustment);
+        LOGGER.debug("Adding new nodes for host group {}", hostGroupWithAdjustment);
+        Map<String, String> hosts = hostRunner.addClusterServices(stackId, hostGroupWithAdjustment);
         if (primaryGatewayChanged) {
             clusterServiceRunner.updateAmbariClientConfig(stack, stack.getCluster());
         }
-        for (String hostName : hosts.keySet()) {
-            if (!hostsPerHostGroup.containsKey(hostGroupName)) {
-                hostsPerHostGroup.put(hostGroupName, new ArrayList<>());
-            }
-            hostsPerHostGroup.get(hostGroupName).add(hostName);
-        }
-        clusterService.updateInstancesToRunning(stack.getCluster().getId(), hostsPerHostGroup);
+        clusterService.updateInstancesToRunning(stack.getId(), hosts);
 
         ClusterApi connector = clusterApiConnectors.getConnector(stack);
         if (!primaryGatewayChanged && targetedUpscaleSupportService.targetedUpscaleOperationSupported(stack)) {
