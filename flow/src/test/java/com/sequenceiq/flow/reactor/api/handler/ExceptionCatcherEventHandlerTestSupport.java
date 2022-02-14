@@ -29,7 +29,7 @@ public class ExceptionCatcherEventHandlerTestSupport<T extends Payload> {
      * @param event reactor event
      * @return response event payload
      */
-    public Selectable doAccept(Event<T> event) {
+    public Selectable doAccept(Event<T> event) throws Exception {
         return eventHandler.doAccept(new HandlerEvent(event));
     }
 

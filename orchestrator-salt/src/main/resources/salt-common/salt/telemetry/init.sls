@@ -1,12 +1,12 @@
 {%- from 'telemetry/settings.sls' import telemetry with context %}
-{% if telemetry.databusEndpointValidation and telemetry.databusEndpoint and telemetry.cdpTelemetryVersion > 1 %}
+{% if telemetry.databusEndpointValidation and telemetry.databusEndpoint %}
 check_databus_network_connectivity:
   cmd.run:
-    - name: "cdp-telemetry utils check-connection --url {{ telemetry.databusEndpoint }}"
+    - name: "curl {{ telemetry.databusCurlConnectOpts }} -s -k {{ telemetry.databusEndpoint }} > /dev/null"
     - failhard: True{% if telemetry.proxyUrl %}
     - env:
-       - HTTPS_PROXY: {{ telemetry.proxyUrl }}{% if telemetry.noProxyHosts and telemetry.cdpTelemetryVersion > 8 %}
-       - NO_PROXY: {{ telemetry.noProxyHosts }}{% endif %}{% endif %}{% endif %}{% if telemetry.noProxyHosts and telemetry.cdpTelemetryVersion > 8 %}
+       - https_proxy: {{ telemetry.proxyUrl }}{% if telemetry.noProxyHosts %}
+       - no_proxy: {{ telemetry.noProxyHosts }}{% endif %}{% endif %}{% endif %}{% if telemetry.noProxyHosts and telemetry.cdpTelemetryVersion > 8 %}
 /etc/cdp-telemetry/conf:
   file.directory:
     - makedirs: True
@@ -16,3 +16,5 @@ check_databus_network_connectivity:
         - source: salt://telemetry/template/proxy-whitelist.txt.j2
         - template: jinja
         - mode: '0640'{% endif %}
+include:
+  - telemetry.upgrade

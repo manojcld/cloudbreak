@@ -134,10 +134,14 @@ public class StackImageService {
                 });
     }
 
-    public Optional<StatedImage> getStatedImageInternal(Stack stack) throws CloudbreakImageNotFoundException {
-        com.sequenceiq.cloudbreak.cloud.model.Image image = getCurrentImage(stack);
-        ImageCatalog imageCatalog = getImageCatalogFromStackAndImage(stack, image);
-        return getStatedImageInternal(stack, image, imageCatalog);
+    public Optional<StatedImage> getStatedImageInternal(Stack stack) {
+        try {
+            com.sequenceiq.cloudbreak.cloud.model.Image image = getCurrentImage(stack);
+            ImageCatalog imageCatalog = getImageCatalogFromStackAndImage(stack, image);
+            return getStatedImageInternal(stack, image, imageCatalog);
+        } catch (CloudbreakImageNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     public ImageCatalog getImageCatalogFromStackAndImage(Stack stack, com.sequenceiq.cloudbreak.cloud.model.Image image) {

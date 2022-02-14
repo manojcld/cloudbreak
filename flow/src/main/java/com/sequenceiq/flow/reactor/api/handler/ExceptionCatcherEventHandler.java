@@ -22,7 +22,7 @@ public abstract class ExceptionCatcherEventHandler<T extends Payload> implements
 
     protected abstract Selectable defaultFailureEvent(Long resourceId, Exception e, Event<T> event);
 
-    protected abstract Selectable doAccept(HandlerEvent<T> event);
+    protected abstract Selectable doAccept(HandlerEvent<T> event) throws Exception;
 
     @Override
     public void accept(Event<T> event) {
