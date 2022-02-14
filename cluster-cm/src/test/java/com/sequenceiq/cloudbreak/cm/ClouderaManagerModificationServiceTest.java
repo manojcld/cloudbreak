@@ -652,10 +652,13 @@ class ClouderaManagerModificationServiceTest {
         ApiCommandList apiCommandList = new ApiCommandList();
         apiCommandList.setItems(new ArrayList<>());
         when(clouderaManagerApiFactory.getMgmtServiceResourceApi(any())).thenReturn(mgmtServiceResourceApi);
+        when(clouderaManagerApiFactory.getClustersResourceApi(any())).thenReturn(clustersResourceApi);
         when(mgmtServiceResourceApi.listActiveCommands("SUMMARY")).thenReturn(apiCommandList);
         when(mgmtServiceResourceApi.restartCommand()).thenReturn(new ApiCommand().id(apiCommandId));
         when(clouderaManagerPollingServiceProvider.startPollingCmServicesRestart(stack, apiClientMock, apiCommandId)).thenReturn(success);
         when(clouderaManagerPollingServiceProvider.startPollingCmHostStatus(stack, apiClientMock)).thenReturn(success);
+        ApiHostList clusterHostsRef = new ApiHostList().items(List.of());
+        when(clustersResourceApi.listHosts(eq(STACK_NAME), eq(null), eq(null), eq(null))).thenReturn(clusterHostsRef);
 
         Set<ClusterComponent> clusterComponents = TestUtil.clusterComponentSet(cluster);
         Set<ClusterComponent> clusterComponentsNoCDH = clusterComponents.stream().filter(clusterComponent -> !clusterComponent.getName().equals("CDH"))
@@ -705,6 +708,8 @@ class ClouderaManagerModificationServiceTest {
         when(clustersResourceApi.restartCommand(eq(stack.getName()), any(ApiRestartClusterArgs.class))).thenReturn(new ApiCommand().id(apiCommandId));
         when(clouderaManagerPollingServiceProvider.startPollingCmServicesRestart(stack, apiClientMock, apiCommandId)).thenReturn(success);
         when(clouderaManagerPollingServiceProvider.startPollingCmHostStatus(stack, apiClientMock)).thenReturn(success);
+        ApiHostList clusterHostsRef = new ApiHostList().items(List.of());
+        when(clustersResourceApi.listHosts(eq(STACK_NAME), eq(null), eq(null), eq(null))).thenReturn(clusterHostsRef);
 
         underTest.upgradeClusterRuntime(cluster.getComponents(), true, Optional.empty());
 
@@ -773,6 +778,8 @@ class ClouderaManagerModificationServiceTest {
         when(clustersResourceApi.restartCommand(eq(stack.getName()), any(ApiRestartClusterArgs.class))).thenReturn(new ApiCommand().id(apiCommandId));
         when(clouderaManagerPollingServiceProvider.startPollingCmServicesRestart(stack, apiClientMock, apiCommandId)).thenReturn(success);
         when(clouderaManagerPollingServiceProvider.startPollingCmHostStatus(stack, apiClientMock)).thenReturn(success);
+        ApiHostList clusterHostsRef = new ApiHostList().items(List.of());
+        when(clustersResourceApi.listHosts(eq(STACK_NAME), eq(null), eq(null), eq(null))).thenReturn(clusterHostsRef);
 
         when(clouderaManagerApiClientProvider.getV45Client(any(), any(), any(), any())).thenReturn(apiClientMock);
 
@@ -852,6 +859,8 @@ class ClouderaManagerModificationServiceTest {
                 List.of(new ApiCommand().id(apiCommandId).name("Restart"))));
         when(clouderaManagerPollingServiceProvider.startPollingCmServicesRestart(stack, apiClientMock, apiCommandId)).thenReturn(success);
         when(clouderaManagerPollingServiceProvider.startPollingCmHostStatus(stack, apiClientMock)).thenReturn(success);
+        ApiHostList clusterHostsRef = new ApiHostList().items(List.of());
+        when(clustersResourceApi.listHosts(eq(STACK_NAME), eq(null), eq(null), eq(null))).thenReturn(clusterHostsRef);
 
         when(clouderaManagerApiClientProvider.getV45Client(any(), any(), any(), any())).thenReturn(apiClientMock);
 
@@ -927,6 +936,8 @@ class ClouderaManagerModificationServiceTest {
                 .thenReturn(success);
         when(clouderaManagerPollingServiceProvider.startPollingCmHostStatus(stack, apiClientMock))
                 .thenReturn(success);
+        ApiHostList clusterHostsRef = new ApiHostList().items(List.of());
+        when(clustersResourceApi.listHosts(eq(STACK_NAME), eq(null), eq(null), eq(null))).thenReturn(clusterHostsRef);
 
         underTest.upgradeClusterRuntime(cluster.getComponents(), false, Optional.empty());
 
