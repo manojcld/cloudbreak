@@ -70,6 +70,8 @@ class StackCommonServiceTest {
 
     private static final String SUBNET_ID = "aSubnetId";
 
+    private static final String HOST_GROUP = "compute";
+
     @Mock
     private ImageCatalogService imageCatalogService;
 
@@ -224,9 +226,9 @@ class StackCommonServiceTest {
         instances.add("i-09855f4f334550bce");
         instances.add("i-0c06d3e9d07bacad8");
 
-        underTest.stopMultipleInstancesInWorkspace(STACK_NAME, WORKSPACE_ID, instances, true);
+        underTest.stopMultipleInstancesInWorkspace(STACK_NAME, WORKSPACE_ID, instances, HOST_GROUP, true);
 
-        verify(stackOperationService).stopInstances(stack, instances, true);
+        verify(stackOperationService).stopInstances(stack, instances, HOST_GROUP, true);
     }
 
     @Test
@@ -241,7 +243,7 @@ class StackCommonServiceTest {
         instances.add("i-0c06d3e9d07bacad8");
 
         BadRequestException exception = assertThrows(BadRequestException.class,
-                () -> underTest.stopMultipleInstancesInWorkspace(STACK_CRN, WORKSPACE_ID, instances, true));
+                () -> underTest.stopMultipleInstancesInWorkspace(STACK_CRN, WORKSPACE_ID, instances, HOST_GROUP, true));
         assertEquals("i-09855f4f334550bce, i-0c06d3e9d07bacad8 are nodes of a data lake cluster, therefore it's not allowed to delete/stop them.",
                 exception.getMessage());
         verifyNoInteractions(stackOperationService);

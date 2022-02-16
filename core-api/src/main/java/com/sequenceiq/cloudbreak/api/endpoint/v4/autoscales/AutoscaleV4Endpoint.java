@@ -152,6 +152,7 @@ public interface AutoscaleV4Endpoint {
             notes = Notes.STACK_NOTES, nickname = "autoscaleStopInstancesByCrn")
     void stopInstancesForClusterCrn(@PathParam("crn") String clusterCrn,
             @RequestBody @NotEmpty List<String> instanceIds,
+            @QueryParam("hostGroup") String hostGroup,
             @QueryParam("forced") @DefaultValue("false") Boolean forced,
             @QueryParam("scalingStrategy") ScalingStrategy scalingStrategy);
 
@@ -162,6 +163,7 @@ public interface AutoscaleV4Endpoint {
             notes = Notes.STACK_NOTES, nickname = "autoscaleStopInstancesByName")
     void stopInstancesForClusterName(@PathParam("name") String clusterName,
             @RequestBody @NotEmpty List<String> instanceIds,
+            @QueryParam("hostGroup") String hostGroup,
             @QueryParam("forced") @DefaultValue("false") Boolean forced,
             @QueryParam("scalingStrategy") ScalingStrategy scalingStrategy);
 

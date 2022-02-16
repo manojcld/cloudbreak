@@ -234,7 +234,7 @@ public class StackCommonService {
         return stackOperationService.removeInstances(stack.get(), instanceIds, forced);
     }
 
-    public FlowIdentifier stopMultipleInstancesInWorkspace(NameOrCrn nameOrCrn, Long workspaceId, Set<String> instanceIds, boolean forced) {
+    public FlowIdentifier stopMultipleInstancesInWorkspace(NameOrCrn nameOrCrn, Long workspaceId, Set<String> instanceIds, String hostGroup, boolean forced) {
         Optional<Stack> stack = stackService.findStackByNameOrCrnAndWorkspaceId(nameOrCrn, workspaceId);
         if (stack.isEmpty()) {
             throw new BadRequestException("The requested Data Hub does not exist.");
@@ -243,7 +243,7 @@ public class StackCommonService {
             throw new BadRequestException("The entitlement for scaling via stop/start is not enabled");
         }
         validateStackIsNotDataLake(stack.get(), instanceIds);
-        return stackOperationService.stopInstances(stack.get(), instanceIds, forced);
+        return stackOperationService.stopInstances(stack.get(), instanceIds, hostGroup, forced);
     }
 
     public FlowIdentifier putStartInWorkspace(NameOrCrn nameOrCrn, Long workspaceId) {

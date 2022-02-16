@@ -205,7 +205,7 @@ public class ScalingRequest implements Runnable {
             LOGGER.info("Sending request to remove  nodeIdCount '{}', nodeId(s) '{}' from host group '{}', cluster '{}', user '{}'",
                     decommissionNodeIds.size(), decommissionNodeIds, hostGroup, cluster.getStackCrn(),
                     cluster.getClusterPertain().getUserCrn());
-            cloudbreakCommunicator.decommissionInstancesForCluster(cluster, decommissionNodeIds);
+            cloudbreakCommunicator.decommissionInstancesForCluster(cluster, hostGroup, decommissionNodeIds);
             scalingStatus = ScalingStatus.SUCCESS;
             statusReason = getMessageForCBSuccess();
             metricService.incrementMetricCounter(MetricType.CLUSTER_DOWNSCALE_SUCCESSFUL);
