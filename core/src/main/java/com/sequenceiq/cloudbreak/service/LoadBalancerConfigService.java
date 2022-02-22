@@ -70,6 +70,8 @@ public class LoadBalancerConfigService {
 
     private static final String ENDPOINT_SUFFIX = "gateway";
 
+    private static final String INTERNAL_DISABLE_TAG_KEY = "cloudera:internal:disable-loadbalancer";
+
     @Value("${cb.https.port:443}")
     private String httpsPort;
 
@@ -403,8 +405,12 @@ public class LoadBalancerConfigService {
     }
 
     private boolean isLoadBalancerEnabled(StackType type, String cloudPlatform, DetailedEnvironmentResponse environment, boolean flagEnabled) {
-        return getSupportedPlatforms().contains(cloudPlatform) &&
+        return getSupportedPlatforms().contains(cloudPlatform) && !isNoLoadBalancerInternal(environment) &&
             (flagEnabled || isLoadBalancerEnabledForDatalake(type, environment) || isLoadBalancerEnabledForDatahub(type, environment));
+    }
+
+    private boolean isNoLoadBalancerInternal(DetailedEnvironmentResponse environment) {
+        return environment != null && environment.getTags() != null && environment.getTags().getTagValue(INTERNAL_DISABLE_TAG_KEY) != null;
     }
 
     private boolean isLoadBalancerEnabledForDatalake(StackType type, DetailedEnvironmentResponse environment) {
