@@ -32,8 +32,8 @@ public class EnvironmentJobService {
         jobService.unschedule(envId.toString());
     }
 
-    public void unschedule(Environment environment) {
-        unschedule(environment.getId());
-        LOGGER.info("{} is unscheduled, it will not auto sync anymore", environment.getName());
-    }
+//    public void unschedule(Environment environment) {
+//        unschedule(environment.getId());
+//        LOGGER.info("{} is unscheduled, it will not auto sync anymore", environment.getName());
+//    }
 }

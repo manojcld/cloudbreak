@@ -22,6 +22,7 @@ import com.sequenceiq.cloudbreak.structuredevent.repository.AccountAwareResource
 import com.sequenceiq.cloudbreak.structuredevent.service.CDPDefaultStructuredEventClient;
 import com.sequenceiq.environment.api.v1.environment.model.response.SimpleEnvironmentResponse;
 import com.sequenceiq.environment.environment.dto.EnvironmentDto;
+import com.sequenceiq.environment.environment.dto.EnvironmentViewDto;
 import com.sequenceiq.environment.environment.v1.converter.EnvironmentResponseConverter;
 import com.sequenceiq.flow.ha.NodeConfig;
 import com.sequenceiq.flow.reactor.api.event.BaseNamedFlowEvent;
@@ -58,8 +59,7 @@ public class EventSenderService {
         sendEventAndNotification(environmentDto, userCrn, resourceEvent, new HashSet<>());
     }
 
-    public void sendEventAndNotification(EnvironmentDto environmentDto, String userCrn, ResourceEvent resourceEvent,
-        Collection<?> messageArgs) {
+    public void sendEventAndNotification(EnvironmentDto environmentDto, String userCrn, ResourceEvent resourceEvent, Collection<?> messageArgs) {
         SimpleEnvironmentResponse simpleResponse = environmentResponseConverter.dtoToSimpleResponse(environmentDto);
         sendEventAndNotificationWithPayload(environmentDto, userCrn, resourceEvent, simpleResponse, messageArgs);
     }

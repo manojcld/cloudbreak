@@ -325,7 +325,7 @@ public class Flow2Handler implements Consumer<Event<? extends Payload>> {
     }
 
     private FlowAcceptResult createNewFlow(String key, Payload payload, FlowParameters flowParameters, String flowChainId, String flowChainType,
-            Map<Object, Object> contextParams, FlowConfiguration<?> flowConfig) throws TransactionExecutionException {
+            Map<Object, Object> contextParams, FlowConfiguration<?> flowConfig) {
         String flowId = UUID.randomUUID().toString();
         addFlowParameters(flowParameters, flowId, flowChainId, flowConfig);
         Flow flow = flowConfig.createFlow(flowId, flowChainId, payload.getResourceId(), flowChainType);
@@ -334,13 +334,11 @@ public class Flow2Handler implements Consumer<Event<? extends Payload>> {
             runningFlows.put(flow, flowChainId);
             Benchmark.measure(() -> flowStatCache.put(flowId, flowChainId, payload.getResourceId(),
                     flowConfig.getFlowOperationType().name(), flow.getFlowConfigClass(), false), LOGGER, "Creating flow stat took {}ms");
-            transactionService.required(() -> {
-                flowLogService.save(flowParameters, flowChainId, key, payload, null, flowConfig.getClass(), flow.getCurrentState());
-                if (flowChainId != null) {
-                    flowChains.saveAllUnsavedFlowChains(flowChainId, flowParameters.getFlowTriggerUserCrn());
-                    flowChains.removeLastTriggerEvent(flowChainId, flowParameters.getFlowTriggerUserCrn());
-                }
-            });
+            flowLogService.save(flowParameters, flowChainId, key, payload, null, flowConfig.getClass(), flow.getCurrentState());
+            if (flowChainId != null) {
+                flowChains.saveAllUnsavedFlowChains(flowChainId, flowParameters.getFlowTriggerUserCrn());
+                flowChains.removeLastTriggerEvent(flowChainId, flowParameters.getFlowTriggerUserCrn());
+            }
             logFlowId(flowId);
             flow.sendEvent(key, flowParameters.getFlowTriggerUserCrn(), payload, flowParameters.getSpanContext(),
                     flowParameters.getFlowOperationType());
